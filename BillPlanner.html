@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Primary SEO -->
+    <title>Free Advanced Bill Planner & Budget Tracker 2026 – Manage Monthly Bills, Debt & Cash Flow</title>
+    <meta name="description" content="Free online bill planner and budget tracker. Track monthly bills, income, expenses, debt payments, recurring due dates, and cash flow with interactive charts. Never miss a payment.">
+    <meta name="keywords" content="bill planner, budget tracker, monthly bill organizer, cash flow planner, debt tracker, free personal finance tool, due date tracker, bill organizer, expense tracker, debt payoff planner">
+    <meta name="author" content="Advanced Financial Planner">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph / Social Sharing -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Free Advanced Bill Planner & Budget Tracker 2026">
+    <meta property="og:description" content="Track monthly bills, income, expenses, debt, and cash flow with this free online bill planner and budget tracker. Interactive charts and due date projections.">
+    <meta property="og:url" content="https://yourdomain.com/bill-planner">
+    <meta property="og:site_name" content="Advanced Financial Planner">
+    <meta property="og:locale" content="en_US">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Free Advanced Bill Planner & Budget Tracker 2026">
+    <meta name="twitter:description" content="Free online tool to track monthly bills, debt, income, expenses and cash flow. Never miss a due date.">
+    
+    <!-- Favicon (simple money emoji SVG) -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💰</text></svg>">
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f4f7f6;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        h1, h2 {
+            color: #2c3e50;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 10px;
+        }
+        .settings-toggle {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            font-size: 24px;
+            cursor: pointer;
+            user-select: none;
+            z-index: 10;
+        }
+        .settings-area {
+            background: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .settings-area h2 { border: none; padding-bottom: 5px; margin-top: 0;}
+        .settings-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+        .settings-grid label { font-weight: bold; display: flex; align-items: center; gap: 5px; }
+        .hidden { display: none !important; }
+        .controls, .entries { display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 20px; }
+        .form-section, .list-section { flex: 1; min-width: 280px; }
+        .form-section { padding: 20px; background: #ecf0f1; border-radius: 5px; }
+        #debt-form-wrapper { flex: 1; display: flex; flex-direction: column; min-width: 280px; gap: 0px; }
+        input, select { width: calc(100% - 22px); padding: 10px; margin-bottom: 10px; border: 1px solid #bdc3c7; border-radius: 4px; }
+        .input-group { display: flex; gap: 10px; }
+        button { width: 100%; padding: 12px; border: none; border-radius: 4px; background: #3498db; color: white; font-size: 16px; cursor: pointer; transition: background 0.3s; margin-top: 5px; }
+        button:hover { background: #2980b9; }
+        .action-buttons { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+        .action-buttons button, .action-buttons label { flex: 1; text-align: center; }
+        .generate-btn { background-color: #2ecc71; }
+        .import-btn-label { background-color: #9b59b6; padding: 12px; border-radius: 4px; color: white; cursor: pointer;}
+        .export-btn { background-color: #f39c12; }
+        .clear-btn { background-color: #e74c3c; }
+        ul {
+            list-style-type: none;
+            padding: 0;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+        }
+        li { background: #f9f9f9; padding: 8px 12px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        li:last-child { border-bottom: none; }
+        .remove-btn { color: #e74c3c; cursor: pointer; font-weight: bold; font-size: 20px; padding: 0 5px; }
+        .edit-btn {
+            padding: 2px 8px;
+            font-size: 12px;
+            background: #7f8c8d;
+            margin-right: 10px;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            width: auto;
+            margin-top: 0;
+        }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #34495e; color: white; }
+        tr:nth-child(even) { background-color: #f2f2f2; }
+        .negative-balance { background-color: #e74c3c !important; color: white; font-weight: bold; }
+        .income-amount { color: #27ae60; font-weight: bold; }
+        .expense-amount, .interest-amount { color: #c0392b; font-weight: bold; }
+        .debt_payment-amount { color: #3498db; font-weight: bold; }
+        .graph-container { margin-top: 30px; }
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .modal-content h2 { margin-top: 0; }
+        .modal-buttons { display: flex; gap: 10px; margin-top: 20px; }
+        .modal-buttons .cancel-btn { background-color: #e74c3c; }
+
+        /* ===== AD PLACEHOLDER STYLES ===== */
+        .ad-placeholder {
+            background: #fafafa;
+            border: 2px dashed #ccc;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #999;
+            font-size: 13px;
+            margin: 15px 0;
+            min-height: 90px;
+            overflow: hidden;
+        }
+        .ad-top {
+            min-height: 90px; /* typical banner height */
+            width: 100%;
+        }
+        .ad-rectangle {
+            min-height: 250px;
+            width: 100%;
+            position: sticky;
+            top: 20px;
+        }
+        .ad-bottom {
+            min-height: 90px;
+            width: 100%;
+            margin-top: 30px;
+        }
+
+        /* Layout for main tool + sidebar ad */
+        .content-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            align-items: flex-start;
+        }
+        .main-tool {
+            flex: 1;
+            min-width: 280px;
+        }
+        .ad-sidebar {
+            width: 300px;
+            flex-shrink: 0;
+        }
+        @media (max-width: 1050px) {
+            .ad-sidebar {
+                width: 100%;
+                order: 3;
+            }
+            .ad-rectangle {
+                position: static;
+                min-height: 100px;
+            }
+        }
+
+        /* SEO content section */
+        .seo-content {
+            margin-top: 40px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+            line-height: 1.75;
+        }
+        .seo-content h2 {
+            margin-top: 0;
+            border-bottom: 2px solid #dee2e6;
+        }
+        .seo-content h3 {
+            color: #2c3e50;
+            margin-top: 25px;
+        }
+        .seo-content p {
+            margin-bottom: 15px;
+        }
+        .seo-content ul {
+            list-style-type: disc;
+            padding-left: 25px;
+            max-height: none;
+            border: none;
+            background: transparent;
+            margin-bottom: 15px;
+        }
+        .seo-content li {
+            background: transparent;
+            border: none;
+            padding: 4px 0;
+            display: list-item;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <span class="settings-toggle" onclick="toggleSettings()">⚙️</span>
+        
+        <header>
+            <h1>Free Advanced Bill Planner & Budget Tracker</h1>
+            
+            <!-- ========== TOP BANNER AD PLACEHOLDER ========== -->
+            <!-- 
+                PASTE YOUR GOOGLE ADSENSE CODE HERE
+                Recommended: Responsive ad unit or 728x90 Leaderboard
+                Example: <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXX" ...></script>
+                         <ins class="adsbygoogle" ...></ins>
+                         <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+            -->
+            <div class="ad-placeholder ad-top">
+                <span>Advertisement – Top Banner (728×90 or Responsive)<br>Paste AdSense code inside this div</span>
+            </div>
+            <!-- ========== END TOP BANNER ========== -->
+        </header>
+
+        <div id="settings-area" class="settings-area hidden">
+            <h2>Settings</h2>
+            <div class="settings-grid">
+                <label><input type="checkbox" id="toggle-debt-section" onchange="toggleSection('debt', this.checked)">Show Debt Section</label>
+                <label><input type="checkbox" id="toggle-graph-points" onchange="generatePlan()">Show Graph Points</label>
+                <label><input type="checkbox" id="toggle-cashflow-graph" onchange="toggleGraphVisibility()">Show Cash Flow Graph</label>
+                <label><input type="checkbox" id="toggle-debt-graph" onchange="toggleGraphVisibility()">Show Debt Graph</label>
+                <label><input type="checkbox" id="toggle-networth-graph" onchange="toggleGraphVisibility()">Show Net Worth Graph</label>
+                <label><input type="checkbox" id="toggle-cashflow-plan" onchange="togglePlanVisibility()">Show Cash Flow Plan</label>
+                <label><input type="checkbox" id="toggle-debtflow-plan" onchange="togglePlanVisibility()">Show Debt Flow Plan</label>
+            </div>
+        </div>
+
+        <div class="content-wrapper">
+            <div class="main-tool">
+                <div class="controls">
+                    <div class="form-section">
+                        <h2>Add Bank Account</h2>
+                        <input type="text" id="account-name" placeholder="e.g., Checking Account">
+                        <input type="number" id="account-balance" placeholder="Initial Balance">
+                        <button onclick="addBankAccount()">Add Account</button>
+                    </div>
+                    <div class="list-section">
+                        <h2>Bank Accounts</h2>
+                        <ul id="bank-account-list"></ul>
+                    </div>
+                </div>
+
+                <div class="controls">
+                    <!-- Income and Expense Forms -->
+                    <div class="form-section">
+                        <h2>Add Income</h2>
+                        <label for="income-account-id" style="display: block; margin-bottom: 5px;">Account</label>
+                        <select id="income-account-id" style="margin-bottom: 10px; width: 100%;"></select>
+                        <input type="date" id="income-date" required>
+                        <input type="text" id="income-desc" placeholder="e.g., Paycheck">
+                        <input type="number" id="income-amount" placeholder="Amount">
+                        <label style="display: flex; align-items: center; gap: 5px; margin-bottom: 10px;">
+                            <input type="checkbox" id="income-recurring" onchange="toggleRecurring('income')"> Recurring
+                        </label>
+                        <div id="income-recurring-options" style="display: none;">
+                            <select id="income-frequency">
+                                <option value="weekly">Weekly</option>
+                                <option value="biweekly">Bi-weekly</option>
+                                <option value="monthly">Monthly</option>
+                            </select>
+                        </div>
+                        <button onclick="addTransaction('income')">Add Income</button>
+                    </div>
+                    <div class="form-section">
+                        <h2>Add Expense</h2>
+                        <label for="expense-account-id" style="display: block; margin-bottom: 5px;">Account</label>
+                        <select id="expense-account-id" style="margin-bottom: 10px; width: 100%;"></select>
+                        <input type="date" id="expense-date" required>
+                        <input type="text" id="expense-desc" placeholder="e.g., Rent, Groceries">
+                        <input type="number" id="expense-amount" placeholder="Amount">
+                        <label style="display: flex; align-items: center; gap: 5px; margin-bottom: 10px;">
+                            <input type="checkbox" id="expense-recurring" onchange="toggleRecurring('expense')"> Recurring
+                        </label>
+                        <div id="expense-recurring-options" style="display: none;">
+                            <select id="expense-frequency">
+                                <option value="weekly">Weekly</option>
+                                <option value="biweekly">Bi-weekly</option>
+                                <option value="monthly">Monthly</option>
+                            </select>
+                        </div>
+                        <button onclick="addTransaction('expense')">Add Expense</button>
+                    </div>
+                    <!-- Interest-Bearing Debt Form -->
+                    <div id="debt-form-wrapper" class="form-section">
+                        <h2>Add Interest-Bearing Debt</h2>
+                        <input type="text" id="debt-desc" placeholder="e.g., Visa Card">
+                        <div class="input-group">
+                            <input type="number" id="debt-total" placeholder="Total Debt Amount">
+                            <input type="number" id="debt-apr" placeholder="APR (%)">
+                        </div>
+                        <label for="debt-compounding">Interest Compounding</label>
+                        <select id="debt-compounding">
+                            <option value="daily">Daily</option>
+                            <option value="weekly">Weekly</option>
+                            <option value="monthly" selected>Monthly</option>
+                        </select>
+                        <label for="debt-statement-date">Statement End Date (for interest)</label>
+                        <input type="date" id="debt-statement-date">
+                        <button onclick="addDebt()">Add Debt</button>
+                         <hr>
+                        <h2>Add Debt Payment</h2>
+                         <input type="date" id="debt_payment-date" required>
+                        <label for="debt_payment-account-id" style="display: block; margin-bottom: 5px;">Pay From Account</label>
+                        <select id="debt_payment-account-id" style="margin-bottom: 10px; width: 100%;"></select>
+                        <label for="debt_payment-target">Pay Toward Debt</label>
+                        <select id="debt_payment-target">
+                            <option value="">-- Select a debt --</option>
+                        </select>
+                        <input type="number" id="debt_payment-amount" placeholder="Payment Amount">
+                        <label style="display: flex; align-items: center; gap: 5px; margin-bottom: 10px;">
+                            <input type="checkbox" id="debt_payment-recurring" onchange="toggleRecurring('debt_payment')"> Recurring
+                        </label>
+                        <div id="debt_payment-recurring-options" style="display: none;">
+                            <select id="debt_payment-frequency">
+                                <option value="weekly">Weekly</option>
+                                <option value="biweekly">Bi-weekly</option>
+                                <option value="monthly">Monthly</option>
+                            </select>
+                        </div>
+                        <button onclick="addTransaction('debt_payment')">Add Debt Payment</button>
+                    </div>
+                </div>
+                
+                <!-- Logs for transactions -->
+                <div class="entries">
+                    <div class="list-section"><h2>Income Log</h2><ul id="income-list"></ul></div>
+                    <div class="list-section"><h2>Expense Log</h2><ul id="expense-list"></ul></div>
+                    <div id="debt-log-wrapper" class="list-section"><h2>Debt & Payments Log</h2><ul id="debt_payment-list"></ul></div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="generate-btn" onclick="generatePlan()">Generate Plan & Graphs</button>
+                    <input type="file" id="import-file" accept=".txt,text/plain" onchange="handleFileImport(event)" style="display: none;">
+                    <label for="import-file" class="import-btn-label">Import from File</label>
+                    <button class="export-btn" onclick="exportData()">Export to File</button>
+                    <button class="clear-btn" onclick="clearAllData()">Clear All Data</button>
+                </div>
+                
+                <!-- Graphs -->
+                <div id="cashflow-graphs-container" class="graph-container"></div>
+                <div id="debt-graph-container" class="graph-container hidden"><h2>Debt Balance Graph (Next 6 Weeks)</h2><div style="height: 350px;"><canvas id="debtChart"></canvas></div></div>
+                <div id="networth-graph-container" class="graph-container hidden"><h2>Estimated Net Worth Graph (Next 6 Weeks)</h2><div style="height: 350px;"><canvas id="networthChart"></canvas></div></div>
+                
+                <!-- Output Tables -->
+                <div id="plan-output"><h2>Cash Flow Plan</h2><table id="plan-table"><thead><tr><th>Date</th><th>Description</th><th>Income (+)</th><th>Outflow (-)</th><th>Total Cash Balance</th></tr></thead><tbody></tbody></table></div>
+                
+                <div id="debt-plan-output" style="margin-top: 30px;">
+                    <h2>Debt Flow Plan</h2>
+                    <table id="debt-plan-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Payment (-)</th>
+                                <th>Interest (+)</th>
+                                <th>Total Debt Balance</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div><!-- end .main-tool -->
+
+            <!-- ========== SIDEBAR / RECTANGLE AD PLACEHOLDER ========== -->
+            <aside class="ad-sidebar">
+                <!-- 
+                    PASTE YOUR GOOGLE ADSENSE CODE HERE
+                    Recommended: Medium Rectangle 300x250 or Responsive
+                    This appears on the right side on desktop screens
+                -->
+                <div class="ad-placeholder ad-rectangle">
+                    <span>Advertisement – Sidebar<br>300×250 Rectangle<br><br>Paste AdSense code inside this div</span>
+                </div>
+            </aside>
+            <!-- ========== END SIDEBAR AD ========== -->
+        </div><!-- end .content-wrapper -->
+
+        <!-- SEO Content Section (helps Google understand and rank the page) -->
+        <section class="seo-content">
+            <h2>How to Use This Free Bill Planner & Budget Tracker</h2>
+            
+            <p>Managing monthly bills, tracking income, and planning debt payments can feel overwhelming. This free advanced bill planner and budget tracker was built to give you a clear picture of your cash flow so you never miss a due date or get surprised by interest charges.</p>
+
+            <p>Unlike basic expense trackers, this tool lets you add multiple bank accounts, record one-time or recurring income and expenses, manage interest-bearing debts (credit cards, loans, etc.), and project your balances for the next six weeks. You can see exactly how each payment affects your total cash balance and total debt in real time through interactive charts and detailed cash flow tables.</p>
+
+            <h3>Why Use a Dedicated Bill Planner?</h3>
+            <p>A good bill planner and due date tracker helps you avoid late fees, reduce stress, and make smarter decisions about extra debt payments. When you know exactly when money is coming in and going out, you can plan ahead for large expenses, build an emergency buffer, and accelerate debt payoff using methods like the debt avalanche or debt snowball.</p>
+
+            <p>Many people rely on spreadsheets or paper calendars, but those tools rarely show the combined effect of recurring bills, interest compounding, and multiple accounts. This free online budget tracker brings everything together in one place so you can generate a complete cash flow plan and debt flow plan with a single click.</p>
+
+            <h3>Key Features of This Budget Tracker</h3>
+            <ul>
+                <li><strong>Multiple bank accounts</strong> – Track checking, savings, and other accounts separately while seeing your combined cash position.</li>
+                <li><strong>Recurring income & expenses</strong> – Set weekly, bi-weekly, or monthly transactions so your bill planner automatically projects future due dates.</li>
+                <li><strong>Interest-bearing debt tracking</strong> – Add credit cards or loans with APR and compounding frequency to see how interest grows over time.</li>
+                <li><strong>Debt payment planning</strong> – Schedule one-time or recurring payments and watch your total debt balance decline on the graph.</li>
+                <li><strong>Cash flow & net worth charts</strong> – Visualize the next six weeks of money movement and estimated net worth.</li>
+                <li><strong>Import & export</strong> – Save your data to a simple text file and restore it later or move it between devices.</li>
+            </ul>
+
+            <h3>How to Get Started with Your Monthly Bill Organizer</h3>
+            <p>1. Add your bank accounts and starting balances.<br>
+            2. Enter your regular income (paychecks, side hustles) and set them as recurring if needed.<br>
+            3. Add all your monthly bills and expenses – rent, utilities, subscriptions, groceries – and mark them recurring so the due date tracker projects them automatically.<br>
+            4. If you have credit cards or loans, add them in the debt section with the current balance, APR, and statement date.<br>
+            5. Schedule debt payments from the appropriate account.<br>
+            6. Click “Generate Plan & Graphs” to see your full cash flow plan, debt flow plan, and visual charts.</p>
+
+            <p>This free personal finance tool works entirely in your browser. No account registration is required and your data stays on your device (until you export it). Use it as your everyday bill organizer, a debt payoff planner, or a quick cash flow forecasting tool whenever you need clarity on your finances.</p>
+
+            <p>Whether you are looking for a simple monthly bill tracker, a more advanced budget planner, or a way to stay on top of due dates and interest charges, this tool is designed to help you take control of your money with clear numbers and visual projections.</p>
+        </section>
+
+        <!-- ========== BOTTOM AD PLACEHOLDER ========== -->
+        <!-- 
+            PASTE YOUR GOOGLE ADSENSE CODE HERE
+            Recommended: Responsive ad unit or 728x90 / 970x90
+        -->
+        <div class="ad-placeholder ad-bottom">
+            <span>Advertisement – Bottom Banner<br>Paste AdSense code inside this div</span>
+        </div>
+        <!-- ========== END BOTTOM AD ========== -->
+
+    </div><!-- end .container -->
+
+    <div id="edit-modal" class="modal-overlay" style="display: none;" data-is-recurring="false">
+        <div class="modal-content">
+            <h2>Edit Transaction</h2>
+            <input type="hidden" id="edit-id">
+            <label for="edit-desc">Description</label>
+            <input type="text" id="edit-desc">
+            <label for="edit-amount">Amount</label>
+            <input type="number" id="edit-amount">
+            <div id="edit-account-wrapper" style="display: none;">
+                <label for="edit-account-id">Account</label>
+                <select id="edit-account-id" style="width:100%;"></select>
+            </div>
+            <div id="edit-one-time-fields">
+                <label for="edit-date">Date</label>
+                <input type="date" id="edit-date">
+            </div>
+            <div id="edit-recurring-fields" style="display: none;">
+                <label for="edit-start-date">Start Date</label>
+                <input type="date" id="edit-start-date">
+            </div>
+            <div class="modal-buttons">
+                <button onclick="saveChanges()">Save Changes</button>
+                <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        let transactions = [];
+        let debts = [];
+        let recurringTransactions = [];
+        let bankAccounts = [];
+        let charts = {};
+
+        document.addEventListener('DOMContentLoaded', loadState);
+
+        function toggleSettings() {
+            document.getElementById('settings-area').classList.toggle('hidden');
+        }
+
+        function loadState() {
+            const settings = {
+                showDebt: true, showPoints: true, showCashflow: true,
+                showDebtGraph: false, showNetworth: false, showCashflowPlan: true, showDebtflowPlan: true,
+            };
+            Object.keys(settings).forEach(key => {
+                const element = document.getElementById(`toggle-${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`);
+                if (element) element.checked = settings[key];
+            });
+            
+            toggleSection('debt', settings.showDebt);
+            toggleGraphVisibility();
+            togglePlanVisibility();
+            const today = new Date().toISOString().split('T')[0];
+            ['income-date', 'expense-date', 'debt_payment-date', 'debt-statement-date'].forEach(id => {
+                if(document.getElementById(id)) document.getElementById(id).value = today;
+            });
+            
+            updateAndSave();
+            updateAccountDropdowns();
+            updateDebtPaymentDropdown();
+        }
+
+        function toggleSection(name, isVisible) {
+            document.getElementById(`${name}-form-wrapper`).style.display = isVisible ? 'flex' : 'none';
+            document.getElementById(`${name}-log-wrapper`).style.display = isVisible ? 'block' : 'none';
+        }
+
+        function toggleGraphVisibility() {
+            const cashflowContainer = document.getElementById('cashflow-graphs-container');
+            const isCashflowVisible = document.getElementById('toggle-cashflow-graph').checked;
+            cashflowContainer.style.display = isCashflowVisible ? 'block' : 'none';
+
+            ['debt', 'networth'].forEach(type => {
+                const container = document.getElementById(`${type}-graph-container`);
+                const isVisible = document.getElementById(`toggle-${type}-graph`).checked;
+                container.classList.toggle('hidden', !isVisible);
+            });
+            if (transactions.length > 0 || debts.length > 0 || recurringTransactions.length > 0 || bankAccounts.length > 0) {
+                generatePlan();
+            }
+        }
+        
+        function togglePlanVisibility() {
+            document.getElementById('plan-output').style.display = document.getElementById('toggle-cashflow-plan').checked ? 'block' : 'none';
+            document.getElementById('debt-plan-output').style.display = document.getElementById('toggle-debtflow-plan').checked ? 'block' : 'none';
+        }
+        
+        function addBankAccount() {
+            const name = document.getElementById('account-name').value;
+            const balance = parseFloat(document.getElementById('account-balance').value);
+            if (!name || isNaN(balance)) {
+                alert('Please provide a valid account name and initial balance.');
+                return;
+            }
+            bankAccounts.push({ id: Date.now(), name, balance });
+            document.getElementById('account-name').value = '';
+            document.getElementById('account-balance').value = '';
+            updateAndSave();
+            updateAccountDropdowns();
+        }
+
+        function removeBankAccount(id) {
+            const isUsed = transactions.some(t => t.accountId === id) || recurringTransactions.some(t => t.accountId === id);
+            if (isUsed) {
+                alert('Cannot delete this account as it is linked to transactions. Please reassign or delete them first.');
+                return;
+            }
+            if (confirm('Are you sure you want to delete this bank account?')) {
+                bankAccounts = bankAccounts.filter(acc => acc.id !== id);
+                updateAndSave();
+                updateAccountDropdowns();
+            }
+        }
+
+        function updateBankAccountList() {
+            const list = document.getElementById('bank-account-list');
+            list.innerHTML = '';
+            bankAccounts.forEach(acc => {
+                const li = document.createElement('li');
+                li.innerHTML = `<span>${acc.name}: <strong>${acc.balance.toFixed(2)}</strong> (Initial)</span> <span class="remove-btn" onclick="removeBankAccount(${acc.id})">&times;</span>`;
+                list.appendChild(li);
+            });
+        }
+
+        function updateAccountDropdowns() {
+            const dropdownIds = ['income-account-id', 'expense-account-id', 'debt_payment-account-id', 'edit-account-id'];
+            const optionsHtml = bankAccounts.map(acc => `<option value="${acc.id}">${acc.name}</option>`).join('');
+            dropdownIds.forEach(id => {
+                const dropdown = document.getElementById(id);
+                if (dropdown) {
+                    const defaultOption = bankAccounts.length > 0 ? '' : '<option value="">-- No Accounts --</option>';
+                    dropdown.innerHTML = defaultOption + optionsHtml;
+                }
+            });
+        }
+
+        function toggleRecurring(type) {
+            const isChecked = document.getElementById(`${type}-recurring`).checked;
+            document.getElementById(`${type}-recurring-options`).style.display = isChecked ? 'block' : 'none';
+        }
+
+        function addTransaction(type) {
+            const date = document.getElementById(`${type}-date`).value;
+            let desc = document.getElementById(`${type}-desc`)?.value;
+            const amount = parseFloat(document.getElementById(`${type}-amount`).value);
+            const isRecurring = document.getElementById(`${type}-recurring`)?.checked || false;
+            
+            let accountId = null;
+            if (['income', 'expense', 'debt_payment'].includes(type)) {
+                if (bankAccounts.length === 0) { alert('Please add a bank account first.'); return; }
+                accountId = parseFloat(document.getElementById(`${type}-account-id`).value);
+                if (!accountId) { alert('Please select a bank account.'); return; }
+            }
+            
+            if (type === 'debt_payment') {
+                const targetDebtId = parseFloat(document.getElementById('debt_payment-target').value);
+                if (!targetDebtId) { alert('Please select a debt to pay.'); return; }
+                desc = `Payment to ${debts.find(d => d.id === targetDebtId)?.desc || 'debt'}`;
+            }
+            
+            if (!date || !desc || isNaN(amount)) { alert('Please fill out all fields.'); return; }
+            
+            const item = { id: Date.now() + Math.random(), desc, amount, type, accountId };
+            if (isRecurring) {
+                item.frequency = document.getElementById(`${type}-frequency`).value;
+                item.startDate = date;
+                if (type === 'debt_payment') item.debtId = parseFloat(document.getElementById('debt_payment-target').value);
+                recurringTransactions.push(item);
+            } else {
+                item.date = date;
+                if (type === 'debt_payment') item.debtId = parseFloat(document.getElementById('debt_payment-target').value);
+                transactions.push(item);
+            }
+
+            document.getElementById(`${type}-date`).value = new Date().toISOString().split('T')[0];
+            if(document.getElementById(`${type}-desc`)) document.getElementById(`${type}-desc`).value = '';
+            document.getElementById(`${type}-amount`).value = '';
+            if (type === 'debt_payment') document.getElementById('debt_payment-target').value = '';
+            if (isRecurring) {
+                document.getElementById(`${type}-recurring`).checked = false;
+                toggleRecurring(type);
+            }
+            
+            updateAndSave();
+        }
+        
+        function addDebt() {
+            const desc = document.getElementById('debt-desc').value;
+            const total = parseFloat(document.getElementById('debt-total').value);
+            const apr = parseFloat(document.getElementById('debt-apr').value);
+            const statementDate = document.getElementById('debt-statement-date').value;
+            const compounding = document.getElementById('debt-compounding').value;
+            if (!desc || isNaN(total) || isNaN(apr) || !statementDate) { alert('Please fill out all debt fields.'); return; }
+            debts.push({ id: Date.now() + Math.random(), desc, total, apr, statementDate, compounding });
+            
+            document.getElementById('debt-desc').value = '';
+            document.getElementById('debt-total').value = '';
+            document.getElementById('debt-apr').value = '';
+            
+            updateAndSave();
+            updateDebtPaymentDropdown();
+        }
+
+        function removeTransaction(id) {
+            transactions = transactions.filter(t => t.id !== id);
+            recurringTransactions = recurringTransactions.filter(t => t.id !== id);
+            updateAndSave();
+        }
+        
+        function removeDebt(id) {
+            debts = debts.filter(d => d.id !== id);
+            updateAndSave();
+            updateDebtPaymentDropdown();
+        }
+
+        function updateDebtPaymentDropdown() {
+            const dropdown = document.getElementById('debt_payment-target');
+            const defaultOption = debts.length > 0 ? '<option value="">-- Select a debt --</option>' : '<option value="">-- No Debts --</option>';
+            dropdown.innerHTML = defaultOption + debts.map(d => `<option value="${d.id}">${d.desc} (${d.total.toFixed(2)})</option>`).join('');
+        }
+
+        function updateLists() {
+            const lists = { income: document.getElementById('income-list'), expense: document.getElementById('expense-list'), debt_payment: document.getElementById('debt_payment-list') };
+            Object.values(lists).forEach(list => list.innerHTML = '');
+            
+            [...transactions, ...recurringTransactions].sort((a,b) => new Date(b.date || b.startDate) - new Date(a.date || a.startDate)).forEach(t => {
+                const isRecurring = 'frequency' in t;
+                const date = isRecurring ? t.startDate : t.date;
+                const accountName = bankAccounts.find(a => a.id === t.accountId)?.name || 'N/A';
+                const desc = `${t.desc} (${accountName})`;
+                
+                const li = document.createElement('li');
+                const listKey = t.type === 'debt_payment' ? 'debt_payment' : t.type;
+                
+                if(isRecurring) {
+                    li.style.backgroundColor = '#e3f2fd';
+                    li.innerHTML = `<span>🔄 ${t.frequency}: ${desc} - <span class="${t.type}-amount">${t.amount.toFixed(2)}</span></span> <span><button class="edit-btn" onclick="openEditModal(${t.id}, true)">Edit</button><span class="remove-btn" onclick="removeTransaction(${t.id})">&times;</span></span>`;
+                } else {
+                    li.innerHTML = `<span>${date}: ${desc} - <span class="${t.type}-amount">${t.amount.toFixed(2)}</span></span> <span><button class="edit-btn" onclick="openEditModal(${t.id}, false)">Edit</button><span class="remove-btn" onclick="removeTransaction(${t.id})">&times;</span></span>`;
+                }
+                if(lists[listKey]) lists[listKey].appendChild(li);
+            });
+            
+            const debtList = lists.debt_payment;
+             debts.forEach(d => {
+                const li = document.createElement('li');
+                li.innerHTML = `<span>${d.desc} (Debt): <span class="debt-amount">${d.total.toFixed(2)} @ ${d.apr}%</span></span> <span class="remove-btn" onclick="removeDebt(${d.id})">&times;</span>`;
+                debtList.prepend(li);
+            });
+        }
+        
+        function updateAndSave() {
+            updateLists();
+            updateBankAccountList();
+            generatePlan();
+        }
+        
+        function clearAllData() {
+            if (confirm('Are you sure? This will delete all transactions, debts, and accounts.')) {
+                transactions = []; debts = []; recurringTransactions = []; bankAccounts = [];
+                updateAccountDropdowns();
+                updateDebtPaymentDropdown();
+                updateAndSave();
+            }
+        }
+        
+        function expandRecurringTransactions(projectionLimit, projectionStartDate) {
+            const expanded = [];
+            recurringTransactions.forEach(rt => {
+                let currentDate = new Date(rt.startDate);
+                while (currentDate <= projectionLimit) {
+                    if (currentDate >= projectionStartDate) {
+                        expanded.push({ ...rt, date: currentDate.toISOString().split('T')[0] });
+                    }
+                    if (rt.frequency === 'weekly') currentDate.setDate(currentDate.getDate() + 7);
+                    else if (rt.frequency === 'biweekly') currentDate.setDate(currentDate.getDate() + 14);
+                    else if (rt.frequency === 'monthly') currentDate.setMonth(currentDate.getMonth() + 1);
+                }
+            });
+            return expanded;
+        }
+        
+        function generatePlan() {
+            const projectionStartDate = new Date();
+            projectionStartDate.setHours(0, 0, 0, 0);
+            const finalLimit = new Date(projectionStartDate);
+            finalLimit.setDate(finalLimit.getDate() + 42); 
+            
+            const futureEvents = [
+                ...transactions.filter(t => new Date(t.date) >= projectionStartDate && new Date(t.date) <= finalLimit),
+                ...expandRecurringTransactions(finalLimit, projectionStartDate)
+            ];
+
+            debts.forEach(debt => {
+                let currentDate = new Date(debt.statementDate);
+                while (currentDate <= finalLimit) {
+                    if (currentDate >= projectionStartDate) {
+                         futureEvents.push({
+                            date: currentDate.toISOString().split('T')[0], desc: `Interest for ${debt.desc}`,
+                            type: 'interest', debtId: debt.id
+                        });
+                    }
+                    if (debt.compounding === 'daily') currentDate.setDate(currentDate.getDate() + 1);
+                    else if (debt.compounding === 'weekly') currentDate.setDate(currentDate.getDate() + 7);
+                    else currentDate.setMonth(currentDate.getMonth() + 1);
+                }
+            });
+            futureEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
+            
+            const cashFlowTableBody = document.getElementById('plan-table').querySelector('tbody');
+            const debtFlowTableBody = document.getElementById('debt-plan-table').querySelector('tbody');
+            cashFlowTableBody.innerHTML = '';
+            debtFlowTableBody.innerHTML = '';
+
+            const accountBalances = {};
+            bankAccounts.forEach(acc => accountBalances[acc.id] = acc.balance);
+            const debtBalances = {};
+            debts.forEach(debt => debtBalances[debt.id] = debt.total);
+            
+            const historicalEvents = [
+                ...transactions.filter(event => new Date(event.date) < projectionStartDate),
+                ...expandRecurringTransactions(projectionStartDate, new Date(0))
+            ];
+            historicalEvents.sort((a, b) => new Date(a.date) - new Date(b.date)).forEach(event => {
+                if (event.accountId && accountBalances.hasOwnProperty(event.accountId)) {
+                    if (event.type === 'income') accountBalances[event.accountId] += event.amount;
+                    else if (['expense', 'debt_payment'].includes(event.type)) accountBalances[event.accountId] -= event.amount;
+                }
+                if (event.type === 'debt_payment' && debtBalances.hasOwnProperty(event.debtId)) {
+                    debtBalances[event.debtId] -= event.amount;
+                }
+            });
+
+            let totalCashBalance = Object.values(accountBalances).reduce((sum, bal) => sum + bal, 0);
+            let currentDebtTotal = Object.values(debtBalances).reduce((sum, bal) => sum + bal, 0);
+            
+            const todayStr = projectionStartDate.toISOString().split('T')[0];
+            const graphData = {
+                cashflow: {}, debt: [[todayStr, currentDebtTotal]], networth: [[todayStr, totalCashBalance - currentDebtTotal]]
+            };
+            bankAccounts.forEach(acc => {
+                graphData.cashflow[acc.id] = { name: acc.name, data: [[todayStr, accountBalances[acc.id]]] };
+            });
+
+            cashFlowTableBody.insertRow().innerHTML = `<td>${todayStr}</td><td>Initial Balance</td><td></td><td></td><td><b>${totalCashBalance.toFixed(2)}</b></td>`;
+            debtFlowTableBody.insertRow().innerHTML = `<td>${todayStr}</td><td>Initial Debt Balance</td><td></td><td></td><td><b>${currentDebtTotal.toFixed(2)}</b></td>`;
+            
+            const lastDataPoints = {};
+            bankAccounts.forEach(acc => lastDataPoints[acc.id] = accountBalances[acc.id]);
+
+            futureEvents.forEach(event => {
+                const label = `${event.date} (${event.desc})`;
+                const descWithAccount = `${event.desc} (${bankAccounts.find(a => a.id === event.accountId)?.name || 'N/A'})`;
+
+                if (['income', 'expense', 'debt_payment'].includes(event.type) && accountBalances.hasOwnProperty(event.accountId)) {
+                    const multiplier = event.type === 'income' ? 1 : -1;
+                    accountBalances[event.accountId] += event.amount * multiplier;
+                    totalCashBalance += event.amount * multiplier;
+                    
+                    const row = cashFlowTableBody.insertRow();
+                    row.className = totalCashBalance < 0 ? 'negative-balance' : '';
+                    row.innerHTML = `<td>${event.date}</td><td>${descWithAccount}</td>${multiplier > 0 ? `<td><span class="income-amount">${event.amount.toFixed(2)}</span></td><td></td>` : `<td></td><td><span class="${event.type}-amount">${event.amount.toFixed(2)}</span></td>`}<td>${totalCashBalance.toFixed(2)}</td>`;
+                
+                    lastDataPoints[event.accountId] = accountBalances[event.accountId];
+                }
+                
+                if (event.type === 'debt_payment' && debtBalances.hasOwnProperty(event.debtId)) {
+                    debtBalances[event.debtId] -= event.amount;
+                    currentDebtTotal -= event.amount;
+                    debtFlowTableBody.insertRow().innerHTML = `<td>${event.date}</td><td>${descWithAccount}</td><td><span class="debt_payment-amount">${event.amount.toFixed(2)}</span></td><td></td><td>${currentDebtTotal.toFixed(2)}</td>`;
+                    graphData.debt.push([label, currentDebtTotal]);
+                } else if (event.type === 'interest') {
+                    const debt = debts.find(d => d.id === event.debtId);
+                    if (debt && debtBalances[debt.debtId] > 0) {
+                         const periodicRate = (debt.apr / 100) / (debt.compounding === 'daily' ? 365 : debt.compounding === 'weekly' ? 52 : 12);
+                         const interestAmount = debtBalances[debt.debtId] * periodicRate;
+                         debtBalances[debt.debtId] += interestAmount;
+                         currentDebtTotal += interestAmount;
+                         debtFlowTableBody.insertRow().innerHTML = `<td>${event.date}</td><td>${event.desc}</td><td></td><td><span class="interest-amount">${interestAmount.toFixed(2)}</span></td><td>${currentDebtTotal.toFixed(2)}</td>`;
+                         graphData.debt.push([label, currentDebtTotal]);
+                    }
+                }
+                
+                Object.keys(graphData.cashflow).forEach(accId => {
+                    graphData.cashflow[accId].data.push([label, lastDataPoints[accId]]);
+                });
+                graphData.networth.push([label, totalCashBalance - currentDebtTotal]);
+            });
+            generateGraphs(graphData);
+        }
+
+        function generateGraphs(data) {
+            const showPoints = document.getElementById('toggle-graph-points').checked;
+            
+            const cashflowContainer = document.getElementById('cashflow-graphs-container');
+            cashflowContainer.innerHTML = '';
+            for (const accountId in data.cashflow) {
+                const account = data.cashflow[accountId];
+                const chartWrapper = document.createElement('div');
+                chartWrapper.style.height = '350px';
+                chartWrapper.style.position = 'relative';
+                chartWrapper.style.marginBottom = '20px';
+
+                chartWrapper.innerHTML = `<h2>${account.name} - Cash Flow</h2><canvas id="cashflowChart-${accountId}"></canvas>`;
+                cashflowContainer.appendChild(chartWrapper);
+                createOrUpdateChart(`cashflow-${accountId}`, `${account.name} Cash Flow`, account.data, '#3498db', showPoints);
+            }
+
+            createOrUpdateChart('debt', 'Debt Balance', data.debt, '#c0392b', showPoints);
+            createOrUpdateChart('networth', 'Estimated Net Worth', data.networth, '#27ae60', showPoints);
+        }
+
+        function createOrUpdateChart(type, label, data, color, showPoints) {
+            const canvas = document.getElementById(`${type}Chart`);
+            if (!canvas) return; 
+            const ctx = canvas.getContext('2d');
+
+            if (charts[type]) charts[type].destroy();
+            charts[type] = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.map(d => d[0]),
+                    datasets: [{
+                        label: label,
+                        data: data.map(d => d[1]),
+                        borderColor: color,
+                        backgroundColor: `${color}33`,
+                        fill: true,
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: { y: { ticks: { callback: value => '$' + value.toFixed(0) } } },
+                    plugins: { legend: { display: false }, tooltip: { callbacks: { label: context => `${context.label}: $${context.parsed.y.toFixed(2)}` } } },
+                    elements: { point: { radius: showPoints ? 3 : 0 } }
+                }
+            });
+        }
+        
+        function exportData() {
+            if (!bankAccounts.length && !debts.length && !transactions.length && !recurringTransactions.length) {
+                alert("No data to export.");
+                return;
+            }
+            let fileContent = "[ACCOUNTS]\n" + bankAccounts.map(acc => `A|${acc.id}|${acc.name}|${acc.balance}`).join('\n');
+            fileContent += "\n\n[DEBTS]\n" + debts.map(d => `D|${d.id}|${d.desc}|${d.total}|${d.apr}|${d.statementDate}|${d.compounding || 'monthly'}`).join('\n');
+            fileContent += "\n\n[TRANSACTIONS]\n" + transactions.map(t => `T|${t.id}|${t.date}|${t.desc}|${t.amount}|${t.type}|${t.debtId || ''}|${t.accountId || ''}`).join('\n');
+            fileContent += "\n\n[RECURRING]\n" + recurringTransactions.map(rt => `R|${rt.id}|${rt.startDate}|${rt.desc}|${rt.amount}|${rt.type}|${rt.frequency}|${rt.debtId || ''}|${rt.accountId || ''}`).join('\n');
+
+            const blob = new Blob([fileContent], { type: "text/plain;charset=utf-8" });
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = `financial-plan-${new Date().toISOString().split('T')[0]}.txt`;
+            a.click();
+            URL.revokeObjectURL(a.href);
+        }
+        
+        function handleFileImport(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                if (!confirm("This will overwrite all current data. Are you sure?")) return;
+                try {
+                    const data = { ACCOUNTS: [], DEBTS: [], TRANSACTIONS: [], RECURRING: [] };
+                    let currentSection = "";
+                    e.target.result.split('\n').forEach(line => {
+                        const trimmedLine = line.trim();
+                        if (trimmedLine.startsWith('[')) {
+                            currentSection = trimmedLine.substring(1, trimmedLine.length - 1);
+                        } else if (trimmedLine && currentSection && data[currentSection]) {
+                            const parts = trimmedLine.split('|');
+                            if (currentSection === 'ACCOUNTS' && parts[0] === 'A') data.ACCOUNTS.push({ id: parseFloat(parts[1]), name: parts[2], balance: parseFloat(parts[3]) });
+                            else if (currentSection === 'DEBTS' && parts[0] === 'D') data.DEBTS.push({ id: parseFloat(parts[1]), desc: parts[2], total: parseFloat(parts[3]), apr: parseFloat(parts[4]), statementDate: parts[5], compounding: parts[6] || 'monthly' });
+                            else if (currentSection === 'TRANSACTIONS' && parts[0] === 'T') data.TRANSACTIONS.push({ id: parseFloat(parts[1]), date: parts[2], desc: parts[3], amount: parseFloat(parts[4]), type: parts[5], debtId: parts[6] ? parseFloat(parts[6]) : null, accountId: parts[7] ? parseFloat(parts[7]) : null });
+                            else if (currentSection === 'RECURRING' && parts[0] === 'R') data.RECURRING.push({ id: parseFloat(parts[1]), startDate: parts[2], desc: parts[3], amount: parseFloat(parts[4]), type: parts[5], frequency: parts[6], debtId: parts[7] ? parseFloat(parts[7]) : null, accountId: parts[8] ? parseFloat(parts[8]) : null });
+                        }
+                    });
+                    
+                    bankAccounts = data.ACCOUNTS;
+                    debts = data.DEBTS;
+                    transactions = data.TRANSACTIONS;
+                    recurringTransactions = data.RECURRING;
+                    
+                    updateAccountDropdowns();
+                    updateDebtPaymentDropdown();
+                    updateAndSave();
+                    alert("Data imported successfully!");
+                } catch (err) {
+                    alert("Error importing file: " + err.message);
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+        
+        function openEditModal(id, isRecurring) {
+            const transaction = (isRecurring ? recurringTransactions : transactions).find(t => t.id === id);
+            if (!transaction) return;
+
+            document.getElementById('edit-id').value = id;
+            document.getElementById('edit-desc').value = transaction.desc;
+            document.getElementById('edit-amount').value = transaction.amount;
+            
+            const accountWrapper = document.getElementById('edit-account-wrapper');
+            if (['income', 'expense', 'debt_payment'].includes(transaction.type)) {
+                accountWrapper.style.display = 'block';
+                document.getElementById('edit-account-id').value = transaction.accountId;
+            } else {
+                accountWrapper.style.display = 'none';
+            }
+
+            document.getElementById('edit-one-time-fields').style.display = isRecurring ? 'none' : 'block';
+            document.getElementById('edit-recurring-fields').style.display = isRecurring ? 'block' : 'none';
+            if(isRecurring) document.getElementById('edit-start-date').value = transaction.startDate;
+            else document.getElementById('edit-date').value = transaction.date;
+
+            document.getElementById('edit-modal').setAttribute('data-is-recurring', isRecurring);
+            document.getElementById('edit-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('edit-modal').style.display = 'none';
+        }
+
+        function saveChanges() {
+            const id = parseFloat(document.getElementById('edit-id').value);
+            const isRecurring = document.getElementById('edit-modal').getAttribute('data-is-recurring') === 'true';
+            const arrayToUpdate = isRecurring ? recurringTransactions : transactions;
+            const index = arrayToUpdate.findIndex(t => t.id === id);
+            if (index === -1) return;
+
+            const desc = document.getElementById('edit-desc').value;
+            const amount = parseFloat(document.getElementById('edit-amount').value);
+            if (!desc || isNaN(amount)) { alert('Description and amount are required.'); return; }
+
+            arrayToUpdate[index].desc = desc;
+            arrayToUpdate[index].amount = amount;
+            if (['income', 'expense', 'debt_payment'].includes(arrayToUpdate[index].type)) {
+                 arrayToUpdate[index].accountId = parseFloat(document.getElementById('edit-account-id').value);
+            }
+
+            if (isRecurring) arrayToUpdate[index].startDate = document.getElementById('edit-start-date').value;
+            else arrayToUpdate[index].date = document.getElementById('edit-date').value;
+            
+            closeModal();
+            updateAndSave();
+        }
+    </script>
+</body>
+</html>
